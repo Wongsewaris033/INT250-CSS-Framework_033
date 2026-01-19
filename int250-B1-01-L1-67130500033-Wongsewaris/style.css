@@ -1,0 +1,150 @@
+* {
+    margin: 10px;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#home {
+    width: 100%;
+    margin: -1px;
+    padding-bottom: 2cm;
+    background-color: #5a4b6b;
+}
+
+header {
+    font-size: 30px;
+    color: #e6ccff;
+    float: left;
+    padding-left: 2cm;
+}
+
+.topdiv {
+    float: right;
+    padding-right: 1cm;
+}
+
+.topmenu {
+    color: lightgray;
+    background-color: #3b136f;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 1mm;
+    font-size: 20px;
+    border: none;
+}
+
+.topmenu:hover {
+    color: white;
+    font-weight: bold;
+    background-color: purple;
+    cursor: pointer;
+}
+
+.b {
+    width: 600px;
+    height: 400px;
+    background-color: white;
+    border-top-style: solid;
+    border-top-width: 20px;
+    border-radius: 10px;
+    margin: 25px 0;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.b > div {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 30px;
+}
+
+article {
+    grid-column: 2;
+}
+
+aside {
+    grid-column: 2;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+}
+
+.temperature {
+    border-top-color: green;
+}
+
+.weight {
+    border-top-color: coral;
+}
+
+.distance {
+    border-top-color: cyan;
+}
+
+figure {
+    width: 200px;
+    text-align: center;
+}
+
+figure img {
+    width: 200px;
+}
+
+figcaption {
+    color: black;
+    font-size: 17px;
+    text-align: center;
+}
+
+legend {
+    font-size: 30px;
+    font-weight: bolder;
+}
+
+article button {
+    font-size: 20px;
+    background-color: lightgreen;
+    border: transparent;
+    border-radius: 40px;
+    padding: 8px 15px;
+}
+
+article button:hover {
+    cursor: pointer;
+}
+
+.iconbutton button {
+    width: 40px;
+    height: 40px;
+    background-color: cyan;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: 10px;
+    bottom: 40px;
+    border: none;
+}
+
+.iconbutton img {
+    width: 30px;
+}
+
+footer {
+    width: 100%;
+    background-color: lightpink;
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+}
