@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do List</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body{
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fff7ed, #eef2ff, #ecfeff);
+    }
+
+    .app{ max-width: 780px; }
+
+    .top-card{
+      border: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      color: white;
+      box-shadow: 0 12px 28px rgba(0,0,0,.18);
+    }
+
+    .stat-card{
+      border: 0;
+      border-radius: 16px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    }
+    .stat-total{ background: #f5f3ff; }
+    .stat-active{ background: #ecfeff; }
+    .stat-done{ background: #f0fdf4; }
+
+    .task{
+      border: 0;
+      border-radius: 16px;
+      box-shadow: 0 6px 14px rgba(0,0,0,.08);
+      overflow: hidden;
+    }
+
+    .task-inner{ border-left: 6px solid transparent; }
+    .task.high .task-inner{ border-left-color: #dc3545; }
+    .task.medium .task-inner{ border-left-color: #ffc107; }
+    .task.low .task-inner{ border-left-color: #198754; }
+
+    .task.done{ opacity: .7; }
+    .task.done .task-title{
+      text-decoration: line-through;
+      color: #6c757d;
+    }
+
+    .empty{
+      border: 2px dashed #cbd5e1;
+      background: rgba(255,255,255,.7);
+      border-radius: 16px;
+    }
+
+    .btn i{ pointer-events: none; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4 app">
+
+  <!-- header -->
+  <div class="card top-card mb-3">
+    <div class="card-body">
+      <h4 class="mb-1">Your Tasks, beautifully organized</h4>
+      <div class="small opacity-75">Add tasks, search, filter, and keep everything saved automatically.</div>
+    </div>
+  </div>
+
+  <!-- stats -->
+  <div class="row g-2 mb-3">
+    <div class="col-md-4">
+      <div class="card stat-card stat-total">
+        <div class="card-body">
+          <div>Total</div>
+          <div class="fs-4 fw-bold text-primary" id="totalStat">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card stat-active">
+        <div class="card-body">
+          <div>Active</div>
+          <div class="fs-4 fw-bold text-info" id="activeStat">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card stat-done">
+        <div class="card-body">
+          <div>Done</div>
+          <div class="fs-4 fw-bold text-success" id="doneStat">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- add -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-2">
+        <div class="col">
+          <input id="taskInput" class="form-control" placeholder="Add a task... (press Enter)">
+        </div>
+        <div class="col-md-3">
+          <select id="prioritySelect" class="form-select">
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="col-md-auto">
+          <button class="btn btn-primary w-100" id="addBtn">
+            <i class="bi bi-plus"></i> Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- search -->
+  <input id="searchInput" class="form-control mb-3" placeholder="Search tasks...">
+
+  <!-- filter -->
+  <div class="d-flex gap-2 mb-3">
+    <button class="btn btn-primary btn-sm filter active" data-filter="all">All</button>
+    <button class="btn btn-outline-primary btn-sm filter" data-filter="active">Active</button>
+    <button class="btn btn-outline-primary btn-sm filter" data-filter="done">Done</button>
+  </div>
+
+  <!-- list -->
+  <div id="taskList" class="d-flex flex-column gap-2"></div>
+
+  <!-- footer -->
+  <div class="d-flex justify-content-end mt-3">
+    <button class="btn btn-outline-danger btn-sm" id="clearBtn" disabled>
+      <i class="bi bi-trash3"></i> Clear completed
+    </button>
+  </div>
+</div>
+
+<!-- modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Task</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label small text-secondary">Title</label>
+        <input id="editInput" class="form-control mb-3">
+
+        <label class="form-label small text-secondary">Priority</label>
+        <select id="editSelect" class="form-select">
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="saveBtn">
+          <i class="bi bi-save"></i> Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  var tasks = [];
+  var filter = "all";
+  var editId = null;
+
+  var taskInput = document.getElementById("taskInput");
+  var prioritySelect = document.getElementById("prioritySelect");
+  var addBtn = document.getElementById("addBtn");
+  var searchInput = document.getElementById("searchInput");
+  var taskList = document.getElementById("taskList");
+  var clearBtn = document.getElementById("clearBtn");
+
+  var totalStat = document.getElementById("totalStat");
+  var activeStat = document.getElementById("activeStat");
+  var doneStat = document.getElementById("doneStat");
+
+  var filterBtns = document.querySelectorAll(".filter");
+
+  var editModal = new bootstrap.Modal(document.getElementById("editModal"));
+  var editInput = document.getElementById("editInput");
+  var editSelect = document.getElementById("editSelect");
+  var saveBtn = document.getElementById("saveBtn");
+
+  function makeId(){
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  }
+
+  function formatDate(ts){
+    var d = new Date(ts);
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    var month = months[d.getMonth()];
+    var day   = d.getDate().toString().padStart(2,"0");
+    var year  = d.getFullYear();
+
+    var hour  = d.getHours();
+    var min   = d.getMinutes().toString().padStart(2,"0");
+
+    var ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12;
+    if(hour === 0) hour = 12;
+    hour = hour.toString().padStart(2,"0");
+
+    return month+" "+day+", "+year+", "+hour+":"+min+" "+ampm;
+  }
+
+  function badgeHtml(p){
+    if (p === "high") return '<span class="badge bg-danger">HIGH</span>';
+    if (p === "low") return '<span class="badge bg-success">LOW</span>';
+    return '<span class="badge bg-warning text-dark">MED</span>';
+  }
+
+  function load(){
+    tasks = JSON.parse(localStorage.getItem("tasks_datetime")) || [];
+  }
+
+  function save(){
+    localStorage.setItem("tasks_datetime", JSON.stringify(tasks));
+  }
+
+  function render(){
+    taskList.innerHTML = "";
+    var text = searchInput.value.toLowerCase().trim();
+
+    var visible = tasks
+      .filter(function(t){
+        if (filter === "active") return !t.done;
+        if (filter === "done") return t.done;
+        return true;
+      })
+      .filter(function(t){
+        return t.title.toLowerCase().includes(text);
+      });
+
+    if (visible.length === 0){
+      taskList.innerHTML =
+        '<div class="p-4 text-center empty">' +
+          '<div class="fw-semibold mb-1">No tasks</div>' +
+          '<div class="small text-secondary">Add a task or change filters</div>' +
+        '</div>';
+    }
+
+    visible.forEach(function(t){
+      var div = document.createElement("div");
+      div.className = "card task " + t.priority + (t.done ? " done" : "");
+      div.dataset.id = t.id;
+
+      div.innerHTML =
+        '<div class="card-body task-inner d-flex gap-2 align-items-center">' +
+          '<input class="form-check-input m-0" type="checkbox" ' + (t.done ? "checked" : "") + ' data-action="toggle">' +
+          '<div class="flex-grow-1 overflow-hidden">' +
+            '<div class="task-title fw-semibold text-truncate"></div>' +
+            '<div class="small text-secondary task-time"></div>' +
+          '</div>' +
+          badgeHtml(t.priority) +
+          '<button class="btn btn-sm btn-outline-secondary" data-action="edit">' +
+            '<i class="bi bi-pencil"></i>' +
+          '</button>' +
+          '<button class="btn btn-sm btn-outline-danger" data-action="delete">' +
+            '<i class="bi bi-trash"></i>' +
+          '</button>' +
+        '</div>';
+
+      div.querySelector(".task-title").textContent = t.title;
+      div.querySelector(".task-time").textContent = formatDate(t.createdAt);
+
+      taskList.appendChild(div);
+    });
+
+    var total = tasks.length;
+    var doneCount = tasks.filter(function(t){ return t.done; }).length;
+    totalStat.textContent = total;
+    doneStat.textContent = doneCount;
+    activeStat.textContent = total - doneCount;
+    clearBtn.disabled = (doneCount === 0);
+  }
+
+  function addTask(){
+    var title = taskInput.value.trim();
+    if (title === "") return;
+
+    tasks.unshift({
+      id: makeId(),
+      title: title,
+      priority: prioritySelect.value,
+      done: false,
+      createdAt: Date.now()
+    });
+
+    taskInput.value = "";
+    prioritySelect.value = "medium";
+    save();
+    render();
+  }
+
+  function toggleTask(id){
+    tasks.find(t=>t.id===id).done ^= true;
+    save(); render();
+  }
+
+  function deleteTask(id){
+    tasks = tasks.filter(t=>t.id!==id);
+    save(); render();
+  }
+
+  function clearDone(){
+    tasks = tasks.filter(t=>!t.done);
+    save(); render();
+  }
+
+  function openEdit(id){
+    var t = tasks.find(x=>x.id===id);
+    editId = id;
+    editInput.value = t.title;
+    editSelect.value = t.priority;
+    editModal.show();
+  }
+
+  function saveEdit(){
+    var t = tasks.find(x=>x.id===editId);
+    t.title = editInput.value;
+    t.priority = editSelect.value;
+    save(); render();
+    editModal.hide();
+  }
+
+  addBtn.onclick = addTask;
+  taskInput.onkeydown = e=>{ if(e.key==="Enter") addTask(); };
+  searchInput.oninput = render;
+  clearBtn.onclick = clearDone;
+  saveBtn.onclick = saveEdit;
+
+  for(var i=0;i<filterBtns.length;i++){
+    filterBtns[i].onclick = function(){
+      filter = this.dataset.filter;
+      filterBtns.forEach(b=>{
+        b.classList.remove("btn-primary","active");
+        b.classList.add("btn-outline-primary");
+      });
+      this.classList.add("btn-primary","active");
+      this.classList.remove("btn-outline-primary");
+      render();
+    }
+  }
+
+  taskList.onclick = function(e){
+    var row = e.target.closest(".task");
+    if(!row) return;
+    var id = row.dataset.id;
+    var act = e.target.closest("[data-action]");
+    if(!act) return;
+
+    if(act.dataset.action==="toggle") toggleTask(id);
+    if(act.dataset.action==="delete") deleteTask(id);
+    if(act.dataset.action==="edit") openEdit(id);
+  };
+
+  load();
+  render();
+</script>
+</body>
+</html>
