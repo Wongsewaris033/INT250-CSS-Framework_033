@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@utility btn {
+  @apply px-10 py-2 my-0 font-bold tracking-widest uppercase border-2 border-black hover:bg-black hover:text-white;
+}
+
+@theme {
+  --tracking-widest: 0.3em;
+}
+
+@layer base {
+  h5 {
+    @apply absolute px-6 w-52 bottom-4 duration-200;
+  }
+}
