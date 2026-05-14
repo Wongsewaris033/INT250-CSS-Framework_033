@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+@import "tailwindcss";
+
+/* Step 1: Set up custom colors */
+/* Ref: https://atmos.style/color-converter/hsl-to-oklch */
+@theme {
+    --color-darkBlue:    oklch(25.87% 0.0272 259.98);
+    --color-darkBlue-01: oklch(23.76% 0.0236 259.31);
+    --color-darkBlue-02: oklch(19.4%  0.0322 256.93);
+    --color-darkBlue-03: oklch(28.43% 0.0362 261.86);
+    --color-accent-cyan: oklch(83.98% 0.112 188.82);
+    --color-accent-blue: oklch(65.94% 0.1162 231.19);
+    --color-lightRed:    oklch(66.16% 0.2249 25.88);
+
+    /* Step 2: Set up typography */
+    --font-sans:     "Raleway", sans-serif;
+    --font-opensans: "Open Sans", sans-serif;
+
+    /* Step 3: Set up background images */
+    --background-image-logo-dark-mode:    url('../src/assets/logo-dark-mode.svg');
+    --background-image-logo-light-mode:   url('../src/assets/logo-light-mode.svg');
+    --background-image-curvy-dark-mode:   url('../src/assets/bg-curvy-dark-mode.svg');
+    --background-image-curvy-light-mode:  url('../src/assets/bg-curvy-light-mode.svg');
+}
+
+/* Step 4: Apply dark: utilities when a .dark class is on an ancestor */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Step 5: Define component styles */
+@layer components {
+
+  /* ── Features ── */
+  .features-section {
+    @apply pt-12 bg-gray-50 dark:bg-darkBlue-01;
+  }
+
+  .features-container {
+    @apply container mx-auto px-6 pb-32;
+  }
+
+  .features-grid {
+    @apply grid grid-cols-1 gap-y-16 text-center md:grid-cols-2 md:gap-x-24;
+  }
+
+  .feature-card {
+    @apply flex flex-col items-center space-y-3;
+  }
+
+  .feature-icon-wrapper {
+    @apply flex items-center justify-center h-24 mb-4;
+  }
+
+  .feature-title {
+    @apply text-lg font-bold font-sans;
+  }
+
+  .feature-description {
+    @apply max-w-xs text-sm leading-relaxed;
+  }
+
+  /* ── FAQ ── */
+  .faq-item {
+    @apply border-b border-gray-200 dark:border-gray-600 py-5 cursor-pointer;
+  }
+
+  .faq-question {
+    @apply flex items-center justify-between gap-4;
+  }
+
+  .faq-answer {
+    @apply mt-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed pr-8;
+  }
+
+  /* ── Testimonial Card ── */
+  .testimonial-card {
+    @apply bg-gray-50 dark:bg-darkBlue-03 rounded-lg p-6 md:p-8 shadow-md;
+  }
+
+  /* ── Primary Button ── */
+  .btn-primary {
+    @apply inline-block px-10 py-4 rounded-full text-white font-bold
+           bg-gradient-to-r from-accent-cyan to-accent-blue
+           hover:opacity-90 transition-opacity duration-200
+           focus:outline-none focus:ring-4 focus:ring-accent-cyan/50;
+  }
+}
